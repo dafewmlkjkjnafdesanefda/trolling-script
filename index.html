@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultra Troll Script v69.420</title>
+  <style>
+    :root {
+      --neon-green: #39ff14;
+      --neon-pink: #ff00ff;
+      --neon-blue: #00f0ff;
+      --neon-yellow: #ffff00;
+      --dark: #0a0a0f;
+      --darker: #050508;
+      --card-bg: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-20px); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px var(--neon-green), 0 0 60px rgba(57,255,20,.3); }
+      50%       { box-shadow: 0 0 40px var(--neon-green), 0 0 100px rgba(57,255,20,.6); }
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+    @keyframes blink { 50% { border-color: transparent; } }
+    @keyframes scanline {
+      0%   { top: -100%; }
+      100% { top: 100%; }
+    }
+    @keyframes glitch {
+      0%,100% { clip-path: inset(0 0 100% 0); }
+      10%      { clip-path: inset(10% 0 60% 0); transform: translateX(-4px); }
+      20%      { clip-path: inset(60% 0 20% 0); transform: translateX(4px); }
+      30%      { clip-path: inset(40% 0 40% 0); transform: translateX(-2px); }
+      40%      { clip-path: inset(80% 0 5%  0); transform: translateX(2px); }
+      50%      { clip-path: inset(30% 0 55% 0); transform: translateX(-4px); }
+    }
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes neonFlicker {
+      0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
+      20%,24%,55% { opacity: .4; }
+    }
+    @keyframes rainbowText {
+      0%   { color: #ff0000; }
+      17%  { color: #ff8800; }
+      33%  { color: #ffff00; }
+      50%  { color: #00ff00; }
+      67%  { color: #0088ff; }
+      83%  { color: #8800ff; }
+      100% { color: #ff0000; }
+    }
+    @keyframes particleFall {
+      0%   { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--darker);
+      color: #e0e0e0;
+      overflow-x: hidden;
+    }
+
+    /* ── PARTICLES ─────────────────────────────── */
+    #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      animation: particleFall linear infinite;
+    }
+
+    /* ── HERO ───────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(57,255,20,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 100%, rgba(255,0,255,.12) 0%, transparent 60%),
+                  var(--darker);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,.015) 2px, rgba(57,255,20,.015) 4px);
+      pointer-events: none;
+    }
+
+    /* scanline */
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 4px;
+      background: rgba(57,255,20,.15);
+      animation: scanline 4s linear infinite;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: .35rem 1rem;
+      border-radius: 100px;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: neonFlicker 5s infinite, fadeInUp .8s ease both;
+      animation-delay: 0s, .2s;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      animation: fadeInUp .8s ease both .4s;
+    }
+
+    .hero-title .line1 {
+      display: block;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-blue), var(--neon-pink));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s linear infinite, fadeInUp .8s ease both .4s;
+    }
+
+    .hero-title .glitch-wrap {
+      display: block;
+      position: relative;
+    }
+    .hero-title .line2 {
+      display: block;
+      color: #fff;
+    }
+    .hero-title .glitch-wrap::before {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; right: 0;
+      color: var(--neon-pink);
+      animation: glitch 3s infinite;
+    }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: rgba(255,255,255,.55);
+      max-width: 560px;
+      line-height: 1.6;
+      animation: fadeInUp .8s ease both .6s;
+    }
+
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp .8s ease both .8s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .25s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--neon-green);
+      color: #000;
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+    .btn-primary:hover { transform: scale(1.06); background: #5fff3a; }
+    .btn-outline {
+      background: transparent;
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+    }
+    .btn-outline:hover { background: rgba(57,255,20,.1); transform: scale(1.06); }
+
+    /* orbit decoration */
+    .orbit-ring {
+      position: absolute;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      border: 1px dashed rgba(57,255,20,.2);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .orbit-dot {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--neon-green);
+      box-shadow: 0 0 12px var(--neon-green);
+      top: 50%; left: 50%;
+      margin: -6px 0 0 -6px;
+      animation: orbit 6s linear infinite;
+    }
+    .orbit-dot:nth-child(2) { background: var(--neon-pink); box-shadow: 0 0 12px var(--neon-pink); animation-duration: 9s; animation-direction: reverse; }
+    .orbit-dot:nth-child(3) { background: var(--neon-blue);  box-shadow: 0 0 12px var(--neon-blue);  animation-duration: 12s; }
+
+    /* ── VERSION BADGE ──────────────────────────── */
+    .version-strip {
+      position: relative; z-index: 1;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-blue), var(--neon-pink), var(--neon-green));
+      background-size: 200% auto;
+      animation: gradientShift 3s linear infinite;
+      padding: .6rem 0;
+      text-align: center;
+      font-weight: 800;
+      font-size: .85rem;
+      letter-spacing: .1em;
+      color: #000;
+    }
+
+    /* ── FEATURES SECTION ───────────────────────── */
+    section { position: relative; z-index: 1; padding: 6rem 1.5rem; }
+
+    .section-label {
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--neon-green);
+      margin-bottom: .75rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.55) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: rgba(255,255,255,.45);
+      max-width: 520px;
+      margin: 0 auto 4rem;
+      line-height: 1.7;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(57,255,20,.07), transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .feature-card:hover { border-color: rgba(57,255,20,.4); transform: translateY(-4px); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; color: #fff; }
+    .feature-card p  { font-size: .9rem; color: rgba(255,255,255,.5); line-height: 1.6; }
+
+    /* ── STATS ──────────────────────────────────── */
+    .stats-section {
+      background: linear-gradient(135deg, rgba(57,255,20,.06), rgba(0,240,255,.06));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .stat-label { font-size: .85rem; color: rgba(255,255,255,.45); font-weight: 600; letter-spacing: .05em; }
+
+    /* ── CODE PREVIEW ───────────────────────────── */
+    .code-section { background: var(--dark); }
+    .code-window {
+      max-width: 860px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 60px rgba(57,255,20,.05);
+    }
+    .code-titlebar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: 1rem 1.25rem;
+      background: rgba(255,255,255,.05);
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .code-filename { margin-left: .75rem; font-size: .8rem; color: rgba(255,255,255,.4); font-family: monospace; }
+    .code-copy {
+      margin-left: auto;
+      padding: .3rem .75rem;
+      border-radius: 6px;
+      background: rgba(57,255,20,.12);
+      border: 1px solid rgba(57,255,20,.3);
+      color: var(--neon-green);
+      font-size: .75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .code-copy:hover { background: rgba(57,255,20,.22); }
+
+    .code-body {
+      background: #0d1117;
+      padding: 1.5rem;
+      overflow-x: auto;
+      max-height: 440px;
+    }
+    pre { font-family: 'Courier New', Courier, monospace; font-size: .82rem; line-height: 1.7; }
+    .kw   { color: #ff79c6; }
+    .fn   { color: #50fa7b; }
+    .str  { color: #f1fa8c; }
+    .com  { color: #6272a4; }
+    .num  { color: #bd93f9; }
+    .var  { color: #8be9fd; }
+
+    /* ── RAINBOW MARQUEE ────────────────────────── */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 0;
+      background: var(--darker);
+    }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      animation: marquee 20s linear infinite;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+    }
+    .marquee-item {
+      padding: 0 2rem;
+      animation: rainbowText 2s linear infinite;
+    }
+    .marquee-item:nth-child(2n)   { animation-delay: -.3s; }
+    .marquee-item:nth-child(3n)   { animation-delay: -.6s; }
+
+    /* ── HOW TO USE ─────────────────────────────── */
+    .steps { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      font-weight: 900;
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(57,255,20,.3);
+    }
+    .step-body h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: .25rem; }
+    .step-body p  { font-size: .9rem; color: rgba(255,255,255,.5); line-height: 1.6; }
+    .step-body code {
+      background: rgba(57,255,20,.1);
+      color: var(--neon-green);
+      padding: .1em .4em;
+      border-radius: 4px;
+      font-size: .85em;
+    }
+
+    /* ── WARNING BANNER ─────────────────────────── */
+    .warning-banner {
+      max-width: 860px;
+      margin: 0 auto 3rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      background: rgba(255,165,0,.08);
+      border: 1px solid rgba(255,165,0,.3);
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .warning-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .warning-text { font-size: .875rem; color: rgba(255,255,255,.65); line-height: 1.6; }
+    .warning-text strong { color: #ffa500; }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .75rem;
+    }
+    .footer-sub { font-size: .825rem; color: rgba(255,255,255,.3); }
+
+    /* ── UTILITY ────────────────────────────────── */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    @media (max-width: 600px) {
+      .orbit-ring, .orbit-dot { display: none; }
+      .step { flex-direction: column; gap: .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Particles -->
+<div id="particles"></div>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="orbit-ring">
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
+  </div>
+
+  <span class="hero-badge">&#128293; Roblox &bull; LocalScript &bull; v69.420</span>
+
+  <h1 class="hero-title">
+    <span class="line1">ULTRA TROLL</span>
+    <span class="glitch-wrap" data-text="SCRIPT">
+      <span class="line2">SCRIPT</span>
+    </span>
+  </h1>
+
+  <p class="hero-sub">
+    The most chaotically powerful Roblox admin &amp; troll toolkit ever assembled.
+    Fly, noclip, spin, godmode, rainbow — all in one hideous GUI.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#code" class="btn btn-primary">&#128229; Get the Script</a>
+    <a href="#features" class="btn btn-outline">&#9889; View Features</a>
+  </div>
+</header>
+
+<!-- Version strip -->
+<div class="version-strip">
+  &#128293;&nbsp; ULTRA TROLL SCRIPT v69.420 &nbsp;&#8212;&nbsp; FOR OWN GAME / TESTING USE ONLY &nbsp;&#8212;&nbsp; AS LOCALSCRIPT IN StarterPlayerScripts &nbsp;&#128293;
+</div>
+
+<!-- Stats -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div>
+      <div class="stat-number">8+</div>
+      <div class="stat-label">Troll Modes</div>
+    </div>
+    <div>
+      <div class="stat-number">69</div>
+      <div class="stat-label">Chaos Level</div>
+    </div>
+    <div>
+      <div class="stat-number">420</div>
+      <div class="stat-label">Lines of Lua</div>
+    </div>
+    <div>
+      <div class="stat-number">&#8734;</div>
+      <div class="stat-label">Mayhem</div>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+
+<!-- Features -->
+<section id="features">
+  <p class="section-label">&#9889; Arsenal</p>
+  <h2 class="section-title">Everything You Need to Cause Chaos</h2>
+  <p class="section-sub">Eight devastating troll modes, all togglable with a single click from the ugliest GUI known to Roblox kind.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(57,255,20,.12);">&#9992;&#65039;</div>
+      <h3>Fly Mode</h3>
+      <p>Defy gravity and soar through any map. Controllable speed, smooth movement — glide past all the poor earthbound players.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,240,255,.12);">&#128123;</div>
+      <h3>Noclip</h3>
+      <p>Phase through walls, floors, and every obstacle the map throws at you. Solids are merely a suggestion.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,0,255,.12);">&#128154;</div>
+      <h3>God Mode</h3>
+      <p>Become truly unkillable. Health stays maxed no matter what the game throws at you. Immortality has never looked so green.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,255,0,.12);">&#128640;</div>
+      <h3>Infinite Jump</h3>
+      <p>Jump. Then jump again. And again. The sky is the limit — except there is no limit. Platforms are for quitters.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,100,0,.12);">&#128260;</div>
+      <h3>Spin</h3>
+      <p>Become a tornado of pure chaos. Rotates your character at dizzying speeds that would make anyone nauseous.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(57,255,20,.12);">&#128267;</div>
+      <h3>Full Bright</h3>
+      <p>Obliterates all shadow and atmosphere. No more darkness, no more fog — just raw blinding Roblox daylight everywhere.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,240,255,.12);">&#127775;</div>
+      <h3>Rainbow Body</h3>
+      <p>Cycle through every color in the spectrum at maximum speed. Your character becomes a living pride flag / seizure hazard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,0,255,.12);">&#9851;&#65039;</div>
+      <h3>Anti-AFK</h3>
+      <p>Keeps the game thinking you're active forever. VirtualUser keeps you from ever getting kicked for inactivity again.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Code Preview -->
+<section class="code-section" id="code">
+  <p class="section-label">&#128196; Source Code</p>
+  <h2 class="section-title">The Script</h2>
+  <p class="section-sub">Drop this LocalScript into <code style="color:var(--neon-green);background:rgba(57,255,20,.1);padding:.1em .4em;border-radius:4px;">StarterPlayerScripts</code> and let chaos ensue.</p>
+
+  <div class="warning-banner">
+    <span class="warning-icon">&#9888;&#65039;</span>
+    <span class="warning-text">
+      <strong>For own games &amp; testing only.</strong>
+      This script is intended exclusively for use in your own Roblox games or private test environments.
+      Using it in others' games without permission violates Roblox Terms of Service.
+    </span>
+  </div>
+
+  <div class="code-window">
+    <div class="code-titlebar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="code-filename">TrollScript.lua</span>
+      <button class="code-copy" onclick="copyCode()">&#128203; Copy</button>
+    </div>
+    <div class="code-body">
+      <pre id="codeblock"><span class="com">-- ================================================================</span>
+<span class="com">--   ULTRA TROLL SCRIPT v69.420</span>
+<span class="com">--   FOR OWN GAME / TESTING USE ONLY</span>
+<span class="com">--   Place as LocalScript in StarterPlayerScripts</span>
+<span class="com">-- ================================================================</span>
+
+<span class="kw">local</span> <span class="var">Players</span>          = game:GetService(<span class="str">"Players"</span>)
+<span class="kw">local</span> <span class="var">RunService</span>       = game:GetService(<span class="str">"RunService"</span>)
+<span class="kw">local</span> <span class="var">UserInputService</span> = game:GetService(<span class="str">"UserInputService"</span>)
+<span class="kw">local</span> <span class="var">Lighting</span>         = game:GetService(<span class="str">"Lighting"</span>)
+<span class="kw">local</span> <span class="var">VirtualUser</span>      = game:GetService(<span class="str">"VirtualUser"</span>)
+
+<span class="kw">local</span> <span class="var">LP</span>    = <span class="var">Players</span>.LocalPlayer
+<span class="kw">local</span> <span class="var">Mouse</span> = <span class="var">LP</span>:GetMouse()
+
+<span class="com">-- State</span>
+<span class="kw">local</span> <span class="var">flying</span>, <span class="var">noclip</span>, <span class="var">infJump</span>  = <span class="kw">false</span>, <span class="kw">false</span>, <span class="kw">false</span>
+<span class="kw">local</span> <span class="var">godMode</span>, <span class="var">spinning</span>, <span class="var">antiAFK</span> = <span class="kw">false</span>, <span class="kw">false</span>, <span class="kw">false</span>
+<span class="kw">local</span> <span class="var">fullbright</span>, <span class="var">rainbowBody</span>   = <span class="kw">false</span>, <span class="kw">false</span>
+
+<span class="com">-- Connections</span>
+<span class="kw">local</span> <span class="var">flyConn</span>, <span class="var">noclipConn</span>, <span class="var">spinConn</span>
+<span class="kw">local</span> <span class="var">godConn</span>, <span class="var">rainbowConn</span>
+
+<span class="com">-- GUI: aggressively ugly</span>
+<span class="kw">local</span> <span class="var">ScreenGui</span> = Instance.new(<span class="str">"ScreenGui"</span>)
+<span class="var">ScreenGui</span>.ResetOnSpawn   = <span class="kw">false</span>
+<span class="var">ScreenGui</span>.IgnoreGuiInset = <span class="kw">true</span>
+<span class="var">ScreenGui</span>.Parent         = <span class="var">LP</span>.PlayerGui
+
+<span class="kw">local</span> <span class="var">Main</span> = Instance.new(<span class="str">"Frame"</span>)
+<span class="var">Main</span>.Size             = UDim2.new(<span class="num">0</span>, <span class="num">360</span>, <span class="num">0</span>, <span class="num">520</span>)
+<span class="var">Main</span>.BackgroundColor3  = Color3.fromRGB(<span class="num">40</span>, <span class="num">180</span>, <span class="num">40</span>)
+<span class="var">Main</span>.BorderColor3      = Color3.fromRGB(<span class="num">255</span>, <span class="num">0</span>, <span class="num">255</span>)
+<span class="var">Main</span>.BorderSizePixel   = <span class="num">6</span>
+<span class="var">Main</span>.Active            = <span class="kw">true</span>
+<span class="var">Main</span>.Parent            = <span class="var">ScreenGui</span>
+
+<span class="com">-- ... (full script in repository)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- How to Use -->
+<section id="howto" style="background:var(--dark);">
+  <p class="section-label">&#128214; Guide</p>
+  <h2 class="section-title">How to Install</h2>
+  <p class="section-sub">Up and running in under 60 seconds.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open Roblox Studio</h4>
+        <p>Launch your own game or a private place in Roblox Studio where you have full permissions.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Create a LocalScript</h4>
+        <p>In the Explorer panel, right-click <code>StarterPlayerScripts</code> and insert a <code>LocalScript</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Paste the Code</h4>
+        <p>Copy the full <code>TrollScript.lua</code> from the repository and paste it into your new LocalScript.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Hit Play &amp; Enjoy Chaos</h4>
+        <p>Press <code>F5</code> to playtest. The green-and-magenta GUI appears in the top-left — toggle any mode and watch the mayhem unfold.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">&#128293; ULTRA TROLL SCRIPT</div>
+  <p class="footer-sub">v69.420 &bull; For own games &amp; testing only &bull; Built with pure Lua chaos</p>
+</footer>
+
+<script>
+  /* Particles */
+  (function () {
+    const container = document.getElementById('particles');
+    const colors = ['#39ff14','#ff00ff','#00f0ff','#ffff00','#ff5f57'];
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        background: ${color};
+        box-shadow: 0 0 6px ${color};
+        width: ${3 + Math.random() * 6}px;
+        height: ${3 + Math.random() * 6}px;
+        animation-duration: ${5 + Math.random() * 15}s;
+        animation-delay: ${-Math.random() * 20}s;
+        opacity: ${0.4 + Math.random() * 0.6};
+      `;
+      container.appendChild(p);
+    }
+  })();
+
+  /* Marquee */
+  (function () {
+    const items = ['&#9889; FLY','&#128123; NOCLIP','&#128154; GODMODE','&#128640; INF JUMP',
+                   '&#128260; SPIN','&#128267; FULLBRIGHT','&#127775; RAINBOW','&#9851; ANTI-AFK',
+                   '&#128293; CHAOS','&#127381; TROLL'];
+    const track = document.getElementById('marquee');
+    const html = items.map(i => `<span class="marquee-item">${i}</span>`).join('');
+    track.innerHTML = html + html; // duplicate for seamless loop
+  })();
+
+  /* Copy button */
+  function copyCode() {
+    const raw = `-- ================================================================
+--   ULTRA TROLL SCRIPT v69.420
+--   FOR OWN GAME / TESTING USE ONLY
+--   Place as LocalScript in StarterPlayerScripts
+-- ================================================================
+-- Full source: https://github.com/dafewmlkjkjnafdesanefda/trolling-script`;
+    navigator.clipboard.writeText(raw).then(() => {
+      const btn = document.querySelector('.code-copy');
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      btn.style.background = 'rgba(57,255,20,.3)';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+    });
+  }
+
+  /* Intersection observer: fade-in cards */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.animation = `fadeInUp .6s ease both ${i * 0.07}s`;
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.feature-card, .step').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
